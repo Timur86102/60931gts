@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\TaskController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +22,9 @@ Route::get('/', function () {
 Route::get('/hello', function () {
     return view('hello', ['title' => "Hello Gabbasov Timur!"]);
 });
+
+Route::get('/project', [ProjectController::class, 'index']);
+
+Route::get('/project/{id}', [ProjectController::class, 'show']);
+
+Route::get('/task', [TaskController::class, 'index']);
