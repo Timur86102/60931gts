@@ -25,6 +25,16 @@ Route::get('/hello', function () {
 
 Route::get('/project', [ProjectController::class, 'index']);
 
-Route::get('/project/{id}', [ProjectController::class, 'show']);
+Route::get('/project/{id}', [ProjectController::class, 'show'])->where('id', '[0-9]+');;
+
+Route::get('/project/create', [ProjectController::class, 'create']);
+
+Route::get('/project/edit/{id}', [ProjectController::class, 'edit']);
+
+Route::get('/project/destroy/{id}', [ProjectController::class, 'destroy']);
+
+Route::post('/project/update/{id}', [ProjectController::class, 'update']);
+
+Route::post('/project', [ProjectController::class, 'store']);
 
 Route::get('/task', [TaskController::class, 'index']);
