@@ -27,5 +27,6 @@
                 </tr>
             @endforeach                        
         </table>
+        {{ $projects->links() }}
     </body>
 </html>
