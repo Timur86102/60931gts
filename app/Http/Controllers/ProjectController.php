@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Project;
+use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 
 class ProjectController extends Controller
 {
@@ -58,6 +60,10 @@ class ProjectController extends Controller
      */
     public function edit(string $id)
     {
+        if(!Gate::allows('edit-project', Project::all()->where('id', $id)->first())) {
+            return redirect('/error')->with('message',
+                'У вас нет разрешения на редактирование завершенных проектов.');
+        }
         return view('project_edit', [
             'project' => Project::all()->where('id', $id)->first(),
             'statuses' => Project::STATUSES
