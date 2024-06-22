@@ -14,7 +14,7 @@ class ProjectController extends Controller
      */
     public function index(Request $request)
     {
-        $perpage = $request->perpage ?? 2;
+        $perpage = $request->perpage ?? 5;
         return view('projects', [
             'projects' => Project::paginate($perpage)->withQueryString()
         ]);
@@ -42,7 +42,9 @@ class ProjectController extends Controller
         ]);
         $project = new Project($validated);
         $project->save();
-        return redirect('/project');
+        return redirect('/project')->withErrors([
+            'success' => 'Проект добавлен.'
+        ]);
     }
 
     /**
@@ -61,8 +63,9 @@ class ProjectController extends Controller
     public function edit(string $id)
     {
         if(!Gate::allows('edit-project', Project::all()->where('id', $id)->first())) {
-            return redirect('/error')->with('message',
-                'У вас нет разрешения на редактирование завершенных проектов.');
+            return redirect('/project')->withErrors([
+                'error' => 'У вас нет разрешения на редактирование завершенных проектов.'
+            ]);
         }
         return view('project_edit', [
             'project' => Project::all()->where('id', $id)->first(),
@@ -75,6 +78,11 @@ class ProjectController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        if(!Gate::allows('edit-project', Project::all()->where('id', $id)->first())) {
+            return redirect('/project')->withErrors([
+                'error' => 'У вас нет разрешения на редактирование завершенных проектов.'
+            ]);
+        }
         $validated = $request->validate([
             'name' => 'required|max:255',
             'note' => 'nullable',
@@ -85,7 +93,9 @@ class ProjectController extends Controller
         $project->note = $validated['note'];
         $project->status = $validated['status'];
         $project->save();
-        return redirect('/project');
+        return redirect('/project')->withErrors([
+            'success' => 'Проект обновлен.'
+        ]);
     }
 
     /**
@@ -93,7 +103,14 @@ class ProjectController extends Controller
      */
     public function destroy(string $id)
     {
+        if(!Gate::allows('destroy-project', Project::all()->where('id', $id)->first())) {
+            return redirect('/project')->withErrors([
+                'error' => 'У вас нет разрешения на удаление проектов.'
+            ]);
+        }
         Project::destroy($id);
-        return redirect('/project');
+        return redirect('/project')->withErrors([
+            'success' => 'Проект удален.'
+        ]);
     }
 }
